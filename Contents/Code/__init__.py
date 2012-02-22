@@ -1,12 +1,15 @@
+import re, os, subprocess, string
+from base64 import b64encode
+
+####################################################################################################
+
 APPLICATIONS_PREFIX = "/applications/sickbeard"
 
-NAME = L('Title')
-
-# make sure to replace artwork with what you want
-# these filenames reference the example files in
-# the Contents/Resources/ folder in the bundle
+NAME = 'SickBeard'
 ART  = 'art-default.jpg'
 ICON = 'icon-default.png'
+
+APIKEY = 'ece5107b40fcee59d9f6a4889a8e0a80'
 
 ####################################################################################################
 
@@ -53,39 +56,40 @@ def Start():
 
 def ApplicationsMainMenu():
 
-    # Container acting sort of like a folder on
-    # a file system containing other things like
-    # "sub-folders", videos, music, etc
-    # see:
-    #  http://dev.plexapp.com/docs/Objects.html#MediaContainer
     dir = MediaContainer(viewGroup="InfoList")
-
-
-    # see:
-    #  http://dev.plexapp.com/docs/Objects.html#DirectoryItem
-    #  http://dev.plexapp.com/docs/Objects.html#function-objects
+    
     dir.Append(
-        Function(
-            DirectoryItem(
-                CallbackExample,
-                "directory item title",
-                subtitle="subtitle",
-                summary="clicking on me will call CallbackExample",
+	    Function(
+	        DirectoryItem(
+                ShowList,
+                title="All Shows",
+                subtitle="",
+                summary="",
                 thumb=R(ICON),
                 art=R(ART)
             )
         )
     )
 
+    dir.Append(
+        Function(
+            DirectoryItem(
+                ComingEpisodes,
+                title="Coming Episodes",
+                subtitle="",
+                summary="",
+                thumb=R(ICON),
+                art=R(ART)
+            )
+        )
+    )
 
-    # ... and then return the container
     return dir
 
-def CallbackExample(sender):
+def ComingEpisodes(sender):
 
-    ## you might want to try making me return a MediaContainer
-    ## containing a list of DirectoryItems to see what happens =)
-
+    dir = MediaContainer(viewGroup='InfoList', noCache=True)
+ 
     return MessageContainer(
         "Not implemented",
         "In real life, you'll make more than one callback,\nand you'll do something useful.\nsender.itemTitle=%s" % sender.itemTitle
